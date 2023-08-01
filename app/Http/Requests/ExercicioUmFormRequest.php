@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ExercicioUmFormRequest extends FormRequest
 {
@@ -22,8 +24,28 @@ class ExercicioUmFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'primeiro_numero' => 'required', 
-            'segundo_numero' => ' required',
+            'primeiro_numero' => 'required|numeric', 
+            'segundo_numero' => ' required|numeric',
+        ];
+    }
+    public function failedValidation(Validator $validator){
+        throw new HttpResponseException(
+            response()->json([
+              'success' => false,
+              'error' => $validator-> errors()  
+            ]));
+        
+    }
+    public function messages ()
+    {
+        return[
+            'primeiro_numero.required' => 'Preencha o campo primeiro numero',
+            'primeiro_numero.numeric' => 'O campo é somente números',
+            'segundo_numero.required' => 'Preencha o campo segundo numero',
+            'segundo_numero.numeric' => 'O campo é somente números',
+            
+
+
         ];
     }
 }
